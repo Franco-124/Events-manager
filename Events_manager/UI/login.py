@@ -2,6 +2,7 @@ import customtkinter as ctk
 import threading
 from tkinter import messagebox
 from db.dbconector import Database
+from UI.Interface import Main_UI
 
 
 class Event_manager_login(ctk.CTk):
@@ -10,7 +11,7 @@ class Event_manager_login(ctk.CTk):
         
         # Configuración básica de la ventana
         self.title("Sistema de Programación de Eventos")
-        self.geometry("850x750")
+        self.geometry("900x900")
         self.resizable(True, True)
         
         # Configuración del tema
@@ -316,21 +317,33 @@ class Event_manager_login(ctk.CTk):
         
         if username == "" or password == "":
             messagebox.showinfo("Error", "Debes completar todos los campos")
-        else:
-            # Validar credenciales
-            messagebox.showinfo("Info", "Validando credenciales...")
-    
 
+        else:
+            result = Database().validate_login(username, password)
+            if result:
+                messagebox.showinfo("Info", "Inicio de sesión correcto")
+                self.destroy()
+                app = Main_UI()
+                app.mainloop()
+            else:
+                messagebox.showinfo("Error", "Usuario o contraseña incorrectos")
+           
     def validate_signin(self):
         username = self.reg_username.get()
         email = self.reg_email.get()
         password = self.reg_password.get()
         confirm_password = self.reg_confirm_password.get()
 
+        user_names = Database().get_users_names(username)
+
         if username == "" or email == "" or password == "" or confirm_password == "":
             messagebox.showinfo("Error", "Debes completar todos los campos")
         elif password != confirm_password:
             messagebox.showinfo("Error", "Las contraseñas no coinciden")
+        
+        elif user_names:
+            messagebox.showinfo("Error", "El nombre de usuario ya está en uso, elija otro")
+
         else:
             result = Database().add_user(username, email, password)
             if result  :
@@ -340,6 +353,3 @@ class Event_manager_login(ctk.CTk):
         
        
 
-if __name__ == "__main__":
-    app = Event_manager_login()
-    app.mainloop()

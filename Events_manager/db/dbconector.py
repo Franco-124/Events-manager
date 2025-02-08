@@ -30,7 +30,40 @@ class Database:
         except Exception as e:
             print("Error al agregar usuario: ", e)
             return False
+    
+    def get_users_names(self, user_name:str):
+        try:
+            conexion = self.get_connection()
+            cursor = conexion.cursor()
+            cursor.execute("EXEC obtener_usuarios @nombre = ?", (user_name))
+            users = cursor.fetchall()
+            conexion.close()
 
+            return users
+        
+        except Exception as e:
+            print("Error al obtener usuarios: ", e)
+            return None
+
+
+    def validate_login(self, user_name:str, password:str):
+        try:
+            conexion = self.get_connection()
+            cursor = conexion.cursor()
+            cursor.execute("EXEC buscar_usuario @nombre = ?, @contraseña = ?", 
+                           (user_name, password))
+            user = cursor.fetchall()
+            conexion.close()
+
+            if user:
+                return True
+            else:
+                return None
+        
+        except Exception as e:
+            print("Error al obtener usuarios: ", e)
+            return None
+    
    
 
    
