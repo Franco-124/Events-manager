@@ -8,12 +8,28 @@ contraseña = '1522'
 class Database:
     def get_connection(self):
         try:
-            conexion = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + usuario + ';PWD=' + contraseña)
-
+            conexion = pyodbc.connect(
+                'DRIVER={ODBC Driver 17 for SQL Server};'
+                f'SERVER={server};'
+                f'DATABASE={database};'
+                f'UID={usuario};'
+                f'PWD={contraseña}'
+            )
+            
             return conexion
-        except Exception as e:
-            print("Error de conexión: ", e)
+        except pyodbc.InterfaceError as e:
+            print("Error de conexión: No se pudo conectar a la base de datos. Verifica el servidor y las credenciales.")
+            print("Detalles del error:", e)
             return None
+        except pyodbc.DatabaseError as e:
+            print("Error de conexión: Hubo un problema con la base de datos.")
+            print("Detalles del error:", e)
+            return None
+        except Exception as e:
+            print("Error de conexión: Ocurrió un error inesperado.")
+            print("Detalles del error:", e)
+            return None
+    
 
     def add_user (self, user_name:str, email: str, password:str):
         try:
