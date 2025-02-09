@@ -1,9 +1,14 @@
 import pyodbc
 
-server = 'localhost'
-database = 'Eventos'
-usuario = 'Johan'
-contraseña = '1522'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+server = os.getenv('DB_SERVER')
+database = os.getenv('DB_NAME')
+usuario = os.getenv('DB_USER')
+contraseña = os.getenv('DB_PASSWORD')
 
 class Database:
     def get_connection(self):
@@ -15,7 +20,7 @@ class Database:
                 f'UID={usuario};'
                 f'PWD={contraseña}'
             )
-            
+
             return conexion
         except pyodbc.InterfaceError as e:
             print("Error de conexión: No se pudo conectar a la base de datos. Verifica el servidor y las credenciales.")
