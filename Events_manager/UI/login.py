@@ -3,6 +3,8 @@ import threading
 from tkinter import messagebox
 from db.dbconector import Database
 from UI.Interface import Main_UI
+from UI.retriever import Main_UI_retriever
+
 
 
 class Event_manager_login(ctk.CTk):
@@ -122,15 +124,15 @@ class Event_manager_login(ctk.CTk):
         remember_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
         remember_frame.pack(pady=(10,20))
         
-        remember_checkbox = ctk.CTkCheckBox(
+        self.acceptance_checkbox = ctk.CTkCheckBox(
             remember_frame,
-            text="Recordar mis datos",
+            text="Aceptar terminos y condiciones",
             font=("Helvetica", 12),
             checkbox_width=20,
             checkbox_height=20,
             text_color=["#000000", "#000000"]
         )
-        remember_checkbox.pack(side="left", padx=10)
+        self.acceptance_checkbox.pack(side="left", padx=10)
         
         forgot_button = ctk.CTkButton(
             remember_frame,
@@ -138,7 +140,8 @@ class Event_manager_login(ctk.CTk):
             font=("Helvetica", 12),
             fg_color="transparent",
             hover_color=["#d0d0d0", "#c0c0c0"],
-            text_color=["#000000", "#000000"]
+            text_color=["#000000", "#000000"],
+            command=self.show_retriever
         )
         forgot_button.pack(side="right", padx=10)
         
@@ -198,7 +201,12 @@ class Event_manager_login(ctk.CTk):
             text_color=["#007acc", "#005f99"]
         )
         register_button.pack(pady=10)
-    
+
+    def show_retriever(self):
+        self.destroy()
+        app = Main_UI_retriever()
+        app.mainloop()
+
     def show_register(self):
         self.clear_frame()
         
@@ -275,7 +283,7 @@ class Event_manager_login(ctk.CTk):
         terms_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
         terms_frame.pack(pady=20)
         
-        terms_checkbox = ctk.CTkCheckBox(
+        self.terms_checkbox = ctk.CTkCheckBox(
             terms_frame,
             text="Acepto los términos y condiciones",
             font=("Helvetica", 12),
@@ -283,7 +291,7 @@ class Event_manager_login(ctk.CTk):
             checkbox_height=20,
             text_color=["#000000", "#000000"]
         )
-        terms_checkbox.pack()
+        self.terms_checkbox.pack()
         
         # Botón de registro
         register_button = ctk.CTkButton(
@@ -314,7 +322,12 @@ class Event_manager_login(ctk.CTk):
     def validate_login(self):
         username = self.login_username.get()
         password = self.login_password.get()
-        
+        terms = self.acceptance_checkbox.get()
+
+        if terms == 0:
+            messagebox.showinfo("Error", "Debes aceptar los términos y condiciones")
+            return
+
         if username == "" or password == "":
             messagebox.showinfo("Error", "Debes completar todos los campos")
 
@@ -333,6 +346,12 @@ class Event_manager_login(ctk.CTk):
         email = self.reg_email.get()
         password = self.reg_password.get()
         confirm_password = self.reg_confirm_password.get()
+        acceptance = self.terms_checkbox.get()
+
+        if acceptance == 0:
+            messagebox.showinfo("Error", "Debes aceptar los términos y condiciones")
+            return
+        
 
         user_names = Database().get_users_names(username)
 

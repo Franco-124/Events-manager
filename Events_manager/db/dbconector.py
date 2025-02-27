@@ -26,10 +26,12 @@ class Database:
             print("Error de conexión: No se pudo conectar a la base de datos. Verifica el servidor y las credenciales.")
             print("Detalles del error:", e)
             return None
+        
         except pyodbc.DatabaseError as e:
             print("Error de conexión: Hubo un problema con la base de datos.")
             print("Detalles del error:", e)
             return None
+
         except Exception as e:
             print("Error de conexión: Ocurrió un error inesperado.")
             print("Detalles del error:", e)
